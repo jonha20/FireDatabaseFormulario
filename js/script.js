@@ -28,18 +28,28 @@ const printData = () => {
   db.collection("usuarios")
     .get()
     .then((querySnapshot) => {
-      querySnapshot.forEach((doc, id) => {
+      querySnapshot.forEach((doc) => {
         const contactoDiv = document.createElement("div");
-        
+        const botonBorrar = document.createElement("button")
+        botonBorrar.setAttribute("id", doc.id)
+        botonBorrar.addEventListener("click" , ()=>{
+            db.collection('usuarios').doc(doc.id).delete().then(() => {
+                alert(`Usuario ${doc.id} ha sido borrado`);
+                //Clean
+                document.getElementById('listaContactos').innerHTML = "";
+                //Read all again¡
+              })
+                .catch(() => console.log('Error borrando documento'));
+            
+        })
         contactoDiv.innerHTML = `
             <p>Nombre: ${doc.data().nombre}</p>
             <p>Email: ${doc.data().email}</p>
             <p>Mensaje: ${doc.data().mensaje}</p>
             <p>URL: ${doc.data().url}</p>
             <p>ID: ${doc.id}</p>
-            <button id="delete" type="button">Borrar</button>
-            <hr>
         `;
+        contactoDiv.appendChild(botonBorrar)
         listaContactos.appendChild(contactoDiv);
       });
     });
@@ -80,18 +90,7 @@ document.getElementById("borrarTodo").addEventListener("click", function () {
   contactos = [];
   //readAll();
   alert("Todos los contactos han sido eliminados");
-});/*
-document.getElementById("delete").addEventListener("click", function() {
-    alert("nobxis")
-    db.collection("usuarios")
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        doc.ref.delete();
-      });
-    });
-  });
-*/
+});
   document.getElementById("borrarSeleccionado").addEventListener("click", function () {
   alert("iefbibo")
     const id = prompt('Introduce el ID a borrar');
@@ -104,18 +103,3 @@ document.getElementById("delete").addEventListener("click", function() {
     .catch(() => console.log('Error borrando documento'));
 
   })
-/*function borrarContacto() {
-    db.collection("usuarios")
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        doc.ref.delete();
-      });
-    });
-  
- // printData();
-
-  alert("Todos los contactos han sido eliminados");
-}
-
-*/
